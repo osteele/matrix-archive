@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[requires]
+python_full_version = "3.6.5"
+
+[scripts]
+# import = "env FLASK_APP=back:app FLASK_ENV=development flask import-events"
+
+[packages]
+matrix_client = "*"
+mongoengine = "*"
+click = "*"
+tabulate = "*"
+
+[dev-packages]
