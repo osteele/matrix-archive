@@ -9,3 +9,15 @@ class Message(Document):
     messageType = StringField(r'm\.room\.message', db_field='type', required=True)
     timestamp = DateTimeField(required=True)
     content = DynamicField(required=True)
+
+    def is_image(self):
+        return self.content.get('msgtype') == 'm.image'
+
+    @property
+    def image_url(self):
+        return self.content['url'] if self.is_image() else None
+
+    @property
+    def thumbnail_url(self):
+        return (self.content['info'].get('thumbnail_url')
+                if self.is_image() else None)

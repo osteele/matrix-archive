@@ -16,5 +16,6 @@ click = "*"
 tabulate = "*"
 pyyaml = "*"
 "jinja2" = "*"
+requests = "*"
 
 [dev-packages]

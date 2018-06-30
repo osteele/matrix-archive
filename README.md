@@ -1,4 +1,4 @@
-# Matrix Message Importer
+# Matrix Archive Tools
 
 Import messages from a matrix.org room, for research, archival, and
 preservation.
@@ -24,11 +24,25 @@ instance.
 
 ## Usage
 
+### Import Messages
+
 `pipenv run import_messages.py` imports the messages into the database.
+
+### Export Messages
 
 `pipenv run export_messages.py filename.html` exports a text, HTML, JSON, or
 YAML file. The file contains links to the image download URLs on the Matrix
 server.
+
+### Download Images
+
+`pipenv run download_images.py` downloads all the thumbnail images in the
+database into a download directory (default `thumbnails`), skipping images that
+have already been downloaded.
+
+Use the `--no-thumbnails` option to download full size images instead of
+thumbnails. In this case, the default directory is `images` instead of
+`thumbnails`.
 
 ## References
 
