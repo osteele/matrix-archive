@@ -14,5 +14,7 @@ matrix_client = "*"
 mongoengine = "*"
 click = "*"
 tabulate = "*"
+pyyaml = "*"
+"jinja2" = "*"
 
 [dev-packages]

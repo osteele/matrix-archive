@@ -4,7 +4,7 @@ from itertools import islice
 
 import click
 
-import database  # noqa: F401
+import database_connection  # noqa: F401
 from matrix_connection import matrix_client
 from mongoengine.errors import FieldDoesNotExist, ValidationError
 from schema import Message
@@ -32,23 +32,27 @@ def get_room_events(room_id):
         prev_batch = res['end']
 
 
-def import_events(room_id, count=None):
+def import_events(room_id, limit=None):
     events = get_room_events(room_id)
-    events = (event for event in events if event['type'] in MESSAGE_EVENT_TYPES)
-    events = (event for event in events if 'redacted_because' not in event)
-    events = (event for event in events
-              if not Message.objects(event_id=event['event_id'],
-                                     room_id=event['room_id']))
-    if count:
-        events = islice(events, count)
-    for event in events:
+    # restrict to messages
+    messages = (event for event in events if event['type'] in MESSAGE_EVENT_TYPES)
+    # exclude redacted messages
+    # TODO: remove redacted messages from the database
+    messages = (event for event in messages if 'redacted_because' not in event)
+    # exclude messages that have already been saved
+    messages = (event for event in messages
+                if not Message.objects(event_id=event['event_id'],
+                                       room_id=event['room_id']))
+    if limit:
+        messages = islice(messages, limit)
+    for event in messages:
         fields = event.copy()
         fields['messageType'] = fields.pop('type')
         fields['room_id'] = room_id
         fields['timestamp'] = datetime.fromtimestamp(
             fields.pop('origin_server_ts') / 1000)
-        fields.pop('age')
-        fields.pop('unsigned')
+        fields.pop('age', None)
+        fields.pop('unsigned', None)
         try:
             message = Message(**fields)
         except (FieldDoesNotExist, ValidationError):
@@ -60,11 +64,11 @@ def import_events(room_id, count=None):
 
 
 @click.command()
-@click.option('--count', type=int)
-def cli(count):
+@click.option('--limit', type=int)
+def cli(limit):
     """Import events."""
     for room_id in MATRIX_ROOM_IDS:
-        import_count = sum(1 for _ in import_events(room_id, count))
+        import_count = sum(1 for _ in import_events(room_id, limit))
         print(f"Imported {import_count} messages")
     print(f"The database now has {Message.objects.count()} messages")
 

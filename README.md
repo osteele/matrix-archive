@@ -17,14 +17,18 @@ Set these environment variables: `MATRIX_USER`, `MATRIX_PASSWORD`,
 `MATRIX_ROOM_IDS`.
 
 `MATRIX_ROOM_IDS` should be a comma-separated list of Matrix room IDs (or a
-single id). Run `python3 list_rooms.py` to list the room ids.
+single id). Run `pipenv run list_rooms.py` to list the room ids.
 
 Set `MONGODB_URI` to a MongoDB connection URL, *or* install a local MongoDB
 instance.
 
 ## Usage
 
-`python3 import_messages.py`
+`pipenv run import_messages.py` imports the messages into the database.
+
+`pipenv run export_messages.py filename.html` exports a text, HTML, JSON, or
+YAML file. The file contains links to the image download URLs on the Matrix
+server.
 
 ## References
 
