@@ -1,3 +1,4 @@
+<meta charset="UTF-8">
 {% for message in messages %}
 {% set content = message.content %}
 <div class="message">
