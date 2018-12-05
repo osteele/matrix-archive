@@ -6,7 +6,7 @@ preservation.
 Developed at [Dinacon 2018](https://www.dinacon.org), for use by the
 documentation team.
 
-Use this responsibly and ethically. Don't use people's messages that
+Use this responsibly and ethically. Don't re-publish people's messages
 without their knowledge and consent.
 
 ## Setup
@@ -26,13 +26,13 @@ instance.
 
 ### Import Messages
 
-`pipenv run import_messages.py` imports the messages into the database.
+`pipenv run import` imports the messages into the database.
 
 ### Export Messages
 
-`pipenv run export_messages.py filename.html` exports a text, HTML, JSON, or
-YAML file. The file contains links to the image download URLs on the Matrix
-server.
+`pipenv run export filename.html` exports a text, HTML, JSON, or YAML file,
+depending on the name of `filename.html`. The file contains links to the image
+download URLs on the Matrix server.
 
 ### Download Images
 

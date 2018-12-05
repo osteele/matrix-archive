@@ -7,7 +7,8 @@ verify_ssl = true
 python_full_version = "3.6.5"
 
 [scripts]
-# import = "env FLASK_APP=back:app FLASK_ENV=development flask import-events"
+import = "python import_messages.py"
+export = "python export_messages.py"
 
 [packages]
 matrix_client = "*"
