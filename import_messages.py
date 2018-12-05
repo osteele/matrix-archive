@@ -37,7 +37,6 @@ def import_events(room_id, limit=None):
     # restrict to messages
     messages = (event for event in events if event['type'] in MESSAGE_EVENT_TYPES)
     # exclude redacted messages
-    # TODO: remove redacted messages from the database
     messages = (event for event in messages if 'redacted_because' not in event)
     # exclude messages that have already been saved
     messages = (event for event in messages
@@ -54,13 +53,23 @@ def import_events(room_id, limit=None):
         fields.pop('age', None)
         fields.pop('unsigned', None)
         try:
-            message = Message(**fields)
+            message = Message(**replace_dots(fields))
         except (FieldDoesNotExist, ValidationError):
             print(fields)
             raise
 
         message.save()
         yield message
+
+
+def replace_dots(obj):
+    """Recursively replace '.' by '•' in dictionary key names, to avoid mongodb
+    error.
+    """
+    return {k.replace('.', '•'): replace_dots(v) for k, v in obj.items()} \
+        if isinstance(obj, dict) \
+        else obj
+
 
 
 @click.command()
