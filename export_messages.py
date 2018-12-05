@@ -51,6 +51,10 @@ def dump_html_archive(data, fp, template_path):
 @click.option('--local-images/--no-local-images', default=True)
 @click.argument('filename', default='archive.html')
 def export_archive(room_id, local_images, filename):
+    if room_id and not re.match(r'!.+:matrix.org', room_id):
+        from matrix_connection import matrix_client
+        rooms = matrix_client().get_rooms()
+        room_id = next(id for id, room in rooms.items() if room_id in room.display_name)
     if not room_id:
         room_id, *_ = MATRIX_ROOM_IDS
     fmt = Path(filename).suffix.lstrip('.')
