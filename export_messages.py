@@ -31,7 +31,7 @@ def encode_message(message):
 def replace_by_local_image(data):
     data = data.copy()
     content = data['content']
-    if content.get('msgtype') == 'm.image':
+    if content.get('msgtype') == 'm.image' and 'info' in content:
         url, mimetype = content['url'], content['info']['mimetype']
         if 'thumbnail_url' in content['info']:
             url, mimetype = content['info']['thumbnail_url'], content['info']['thumbnail_info']['mimetype']
