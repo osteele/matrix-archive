@@ -54,11 +54,11 @@ def import_events(room_id, limit=None):
         fields.pop('unsigned', None)
         try:
             message = Message(**replace_dots(fields))
+            message.save()
         except (FieldDoesNotExist, ValidationError):
             print(fields)
             raise
 
-        message.save()
         yield message
 
 
