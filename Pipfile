@@ -9,6 +9,7 @@ python_full_version = "3.6.5"
 [scripts]
 import = "python import_messages.py"
 export = "python export_messages.py"
+list = "python list_rooms.py"
 
 [packages]
 matrix_client = "*"
