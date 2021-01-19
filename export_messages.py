@@ -24,7 +24,22 @@ def encode_message(message):
     data['timestamp'] = data['timestamp'].isoformat()
     content = data['content']
     if 'url' in content:
-        content['url'] = get_download_url(content['url'])
+        url = content['url']
+        if not url.startswith('mxc'):
+            # fallback
+            try:
+                url = json.loads(url)
+                if 'content_uri' in url:
+                    url = url['content_uri']
+                else:
+                    url = ''
+            except JSONDecodeError:
+                url = ''
+        if url == '':
+            # give up
+            del data['content']
+        else:
+            content['url'] = get_download_url(url)
     return data
 
 
