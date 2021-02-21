@@ -24,14 +24,29 @@ def encode_message(message):
     data['timestamp'] = data['timestamp'].isoformat()
     content = data['content']
     if 'url' in content:
-        content['url'] = get_download_url(content['url'])
+        url = content['url']
+        if not url.startswith('mxc'):
+            # fallback
+            try:
+                url = json.loads(url)
+                if 'content_uri' in url:
+                    url = url['content_uri']
+                else:
+                    url = ''
+            except JSONDecodeError:
+                url = ''
+        if url == '':
+            # give up
+            del data['content']
+        else:
+            content['url'] = get_download_url(url)
     return data
 
 
 def replace_by_local_image(data):
     data = data.copy()
     content = data['content']
-    if content.get('msgtype') == 'm.image' and 'info' in content:
+    if content.get('msgtype') == 'm.image' and 'info' in content and 'mimetype' in content['info']:
         url = content['file']['url'] if 'file' in content else content['url']
         mimetype = content['info']['mimetype']
         if 'thumbnail_url' in content['info'] and content['info']['thumbnail_url'] != '':
