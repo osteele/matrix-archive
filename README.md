@@ -14,7 +14,8 @@ without their knowledge and consent.
 Install Pipenv. Run `pipenv install`.
 
 Set these environment variables: `MATRIX_USER`, `MATRIX_PASSWORD`,
-`MATRIX_ROOM_IDS`.
+`MATRIX_ROOM_IDS` (and eventually `MATRIX_HOST` in case your homeserver
+differs from `https://matrix.org`).
 
 `MATRIX_ROOM_IDS` should be a comma-separated list of Matrix room IDs (or a
 single id). Run `pipenv run list` to list the room ids.
