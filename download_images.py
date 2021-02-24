@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -17,22 +16,41 @@ def download_stem(message, prefer_thumbnails):
 
 
 def run_downloads(messages, download_dir, prefer_thumbnails):
+    """Run downloads
+
+    :param messages: List of messages
+    :param download_dir: Location where the images shall be stored
+    :param prefer_thumbnails: Whether to prefer thumbnails than full images.
+    """
+    s = requests.Session()
     for msg in messages:
         image_url = (msg.thumbnail_url if prefer_thumbnails else None) or msg.image_url
-        res = requests.head(get_download_url(image_url))
-        assert res.status_code == 200
-        mtype, subtype = res.headers['content-type'].split('/', 2)
-        if mtype != 'image':
-            print(f"Skipping {image_url}: {res.headers['content-type']}")
-            continue
+        try:
+            download_url = get_download_url(image_url)
+            try:
+                res = s.head(download_url)
+                res.raise_for_status()
+                mtype, subtype = res.headers['content-type'].split('/', 2)
+                if mtype != 'image':
+                    print(f"Skipping {image_url}: {res.headers['content-type']}")
+                    continue
+            except requests.exceptions.RequestException as e:
+                print("{} Skipping...".format(e))
+                continue
 
-        res = requests.get(get_download_url(image_url))
-        assert res.status_code == 200
-        filename = (download_dir / download_stem(msg, prefer_thumbnails)
-                    ).with_suffix('.' + subtype)
-        print('Downloading', image_url, '->', filename)
-        with open(filename, 'wb') as fp:
-            fp.write(res.content)
+            try:
+                res = s.get(download_url)
+                res.raise_for_status()
+                filename = (download_dir / download_stem(msg, prefer_thumbnails)
+                            ).with_suffix('.' + subtype)
+                print('Downloading', image_url, '->', filename)
+                with open(filename, 'wb') as fp:
+                    fp.write(res.content)
+            except requests.exceptions.RequestException as e:
+                print("{} Skipping...".format(e))
+
+        except AssertionError:
+            print('Assertion Error in get_download_url("{}"). Skipping...'.format(image_url))
 
 
 @click.command()
